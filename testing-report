@@ -1,0 +1,107 @@
+
+
+Register User
+
+
+1. 		String userPin = input.getUserPin().length() == 4 ? "00" + input.getUserPin() : input.getUserPin();
+
+Description:
+
+in this condition it will only apply 00 for pin lenght = 4 otherwise no append
+if pin length is 3 or 5 no append
+
+
+
+2. WARN SqlExceptionHelper:137 - SQL Error: 0, SQLState: 23505
+2021-12-04 11:19:29.123 [http-nio-9090-exec-2] ERRORSqlExceptionHelper:142 - ERROR: duplicate key value violates unique constraint "uk_qro7xq4al2twqwjx32ca0v4sa"
+  Detail: Key (user_name)=(rkorbo) already exists.
+2021-12-04 11:19:29.137 [http-nio-9090-exec-2] ERRORPwdDao:121 - Lp [Uid=rkorbo, Type=ADD USER, Msg=Some error ocurred while adding user. org.springframework.dao.DataIntegrityViolationException: could not execute statement; SQL [n/a]; constraint [uk_qro7xq4al2twqwjx32ca0v4sa]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement] 
+
+Description:
+
+for duplicate entry there is no message sent to postman but in logs you can see from sqlexcepiton
+
+3. For inserting register User there is no fetching from table to check if the user exist or not
+it is directly inserting save() error message is shown directly from the help of sqlExceptionHelper in Catch and passed the value as null or error instead a check can be applied like select if user exist then insert 
+
+
+
+
+Login User
+
+I kept api as register bymistake and passed login api body i got 500 internal server and exception stack trace in register method that is when we need loginrequest and registeruserrequest instead of input model becuase in login user api we are passing only username and password then remaining values in input model is null 
+
+
+if request: 
+{
+	"userName":"rkorbo"
+}
+
+
+
+
+output: 
+
+2021-12-04 11:40:10.703 [http-nio-9090-exec-2] INFO PwdDao:41 - Lp [Uid=rkorbo, Type=VALIDATE CREDENTIALS, Msg=Validating Credentials] 
+java.lang.NullPointerException
+	at com.dev.encryptor.AES.encrypt(AES.java:17)
+	at com.dev.manager.util.EncryptionUtil.encrypt(EncryptionUtil.java:24)
+	at com.dev.manager.dao.PwdDao.validate(PwdDao.java:42)
+	at com.dev.manager.service.impl.UserServiceImpl.validateCreds(UserServiceImpl.java:32)
+	at com.dev.manager.controller.UserController.login(UserController.java:55)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:190)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:138)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:105)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:878)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:792)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1040)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:943)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:652)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:733)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:868)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1590)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2021-12-04 11:40:10.873 [http-nio-9090-exec-2] ERRORUserServiceImpl:40 - Lp [Uid=rkorbo, Type=VALIDATE CREDENTIALS, Msg=Validation Failure] 
+
